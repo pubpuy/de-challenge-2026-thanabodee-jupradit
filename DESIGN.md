@@ -20,62 +20,11 @@
 
 ## 1. Architecture Diagram
 
-> 2 diagrams: **§1.1 Medallion Overview** (data flow + Q mapping) + **§1.2 Business Questions** (Q → table lookup)
+> 2 diagrams: **§1.1 Medallion Overview** (architecture image) + **§1.2 Business Questions** (Q → table lookup)
 
 ### 1.1 Medallion Overview
 
-```mermaid
-flowchart TB
-    subgraph BRONZE["🟫 BRONZE (raw, read-only)"]
-        RAW["RAW_EVENTS\n~27M rows · PAYLOAD = JSON string"]
-    end
-
-    subgraph SILVER["🥈 SILVER (typed · enriched · incremental)"]
-        SP["PRODUCTION_EVENTS\nrefresh: every 15 min · MERGE\n─────────────────\nSTATE_CODE · IS_PRODUCING\nDOWNTIME_CATEGORY · PARTS_DELTA\nEVENT_TS_LOCAL (GMT+7)"]
-        SV["VIBRATION_EVENTS\nrefresh: every 15 min · MERGE\n─────────────────\nISO_ZONE · MACHINE_STATE\nRMS_VELOCITY · CREST_FACTOR\nSCHEMA_VERSION (v1/v2)"]
-        VQ["VIBRATION_QUARANTINE\nBAD quality / sparse payload rows"]
-        PWR["POWER_EVENTS\nrefresh: every 15 min · MERGE\n─────────────────\nIS_PEAK_HOUR · FLOOR_NUM\nIS_ANOMALY (PM-F3 flag)\nCUMULATIVE_KWH · POWER_FACTOR"]
-    end
-
-    subgraph GOLD["🥇 GOLD (aggregated KPIs)"]
-        subgraph REF["Reference Tables"]
-            RC["REASON_CODE_LOOKUP"]
-            MC["MACHINE_CONFIG\n(ALWAYS_RUNNING flag)"]
-            SD["SHIFT_DEFINITIONS\n(Day/Night/OT · GMT+7)"]
-            ER["ENERGY_RATE_CONFIG\n(peak 4.50 / off-peak 2.60 ฿)"]
-        end
-        GP["PRODUCTION_HOURLY\nrefresh: every 1 hour\n─────────────────\n✅ Q1 · Group3 uptime vs Group1\n✅ Q4 · Setup time per machine"]
-        GV["VIBRATION_HOURLY\nrefresh: every 1 hour\n─────────────────\n✅ Q2 · motor ISO Zone (A/B/C/D)\n✅ Q5 · 7-day RMS trend"]
-        EH["ENERGY_HOURLY\nrefresh: every 1 hour"]
-        ED["ENERGY_DAILY\nrefresh: every 1 hour\n─────────────────\n✅ Q3 · Floor / shift energy\n✅ Q6 · Weekend vs weekday cost"]
-    end
-
-    subgraph CAPSTONE["📊 Task 4 — Option A: Streamlit Dashboard"]
-        ST["STREAMLIT APP (Snowflake)\n─────────────────\n✅ Q7 · Plant Health at a Glance\n· Tab 1: Production\n· Tab 2: Vibration\n· Tab 3: Energy\n· Status: Green / Yellow / Red"]
-    end
-
-    RAW -->|"SCHEMA_VERSION = '0.1'"| SP
-    RAW -->|"vibration.raw.v1 / v2"| SV
-    RAW -->|"power_meter.raw.v1"| PWR
-
-    SV -->|"QUALITY=BAD / sparse"| VQ
-    SV --> GV
-    PWR --> EH
-    PWR --> ED
-
-    RC --> GP
-    MC --> GP
-    SD --> GP
-    SD --> EH
-    ER --> EH
-    ER --> ED
-    EH --> ED
-    SP --> GP
-
-    GP --> ST
-    GV --> ST
-    ED --> ST
-```
+![Medallion Architecture — Bronze → Silver → Gold → Plant Health Dashboard](docs/screenshots/medallion.jpg)
 
 ### 1.2 Business Questions Mapping
 
