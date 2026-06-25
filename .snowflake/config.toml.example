@@ -1,0 +1,14 @@
+# Copy to config.toml and fill in your Snowflake Trial credentials.
+#   copy .snowflake\config.toml.example .snowflake\config.toml
+# Or run:  .\scripts\activate-snow.ps1  (creates config.toml on first run)
+
+default_connection_name = "de_challenge"
+
+[connections.de_challenge]
+account = "YOUR_ACCOUNT_IDENTIFIER"
+user = "YOUR_USERNAME"
+password = "YOUR_PASSWORD"
+role = "ACCOUNTADMIN"
+warehouse = "CHALLENGE_WH"
+database = "DE_CHALLENGE"
+schema = "BRONZE"

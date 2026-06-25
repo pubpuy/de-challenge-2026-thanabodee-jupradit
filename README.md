@@ -85,17 +85,34 @@ GROUP BY SCHEMA_VERSION ORDER BY COUNT(*) DESC;
 
 ```
 .
-├── README.md              ← คุณอยู่ที่นี่
-├── scenario.md            ← สถานการณ์จำลอง + คำถามจากผู้จัดการ (อ่านก่อน!)
-├── challenge.md           ← รายละเอียดโจทย์ทั้ง 4 tasks
-├── reference/
-│   ├── uns_schema.md      ← อธิบาย UNS hierarchy + payload structure
-│   ├── isa95.md           ← ISA-95 model cheatsheet
-│   └── data_dictionary.md ← รายละเอียด field ทั้งหมด
+├── README.md                          ← คุณอยู่ที่นี่ (+ Video & Dashboard Preview)
+├── DESIGN.md                          ← Architecture, Decision Log, Q1–Q7 mapping
+├── REFLECTION.md                      ← สิ่งที่เรียนรู้ + ปัญหาที่เจอ
+├── scenario.md                        ← สถานการณ์จำลอง + คำถามจากผู้จัดการ
+├── challenge.md                       ← รายละเอียดโจทย์ทั้ง 4 tasks
+├── snowflake.yml                      ← Snow CLI project config (Streamlit deploy)
 ├── sql/
-│   ├── 00_setup.sql       ← สร้าง database, schema, warehouse
-│   └── 01_load_from_s3.sql← โหลดข้อมูลจาก S3
-└── hints/                 ← ถ้าติดปัญหา ดู hint ได้ (แต่จะถูกหักคะแนน)
+│   ├── 00_setup.sql                   ← สร้าง database, schema, warehouse
+│   ├── 01_load_from_s3.sql            ← โหลดข้อมูลจาก S3
+│   ├── 02_silver_schema.sql           ← Silver DDL: Production + Vibration
+│   ├── 02_silver_pipeline.sql         ← Silver pipeline: Stream + Task + MERGE (Prod + Vib)
+│   ├── 02_silver_power.sql            ← Silver DDL + pipeline: Power/Energy
+│   ├── 03_gold_aggregation.sql        ← Gold: Production + Vibration + Reference tables
+│   ├── 03_gold_energy.sql             ← Gold: Energy (HOURLY + DAILY) + ENERGY_RATE_CONFIG
+│   ├── 04_capstone_streamlit.sql      ← Streamlit object deploy + verification queries
+│   └── RUN_ORDER.md                   ← ลำดับการรัน SQL
+├── streamlit/
+│   ├── plant_health.py                ← Dashboard app (3 tabs: Prod / Vib / Energy)
+│   └── .streamlit/config.toml        ← Streamlit theme config
+├── docs/
+│   ├── screenshots/                   ← Dashboard screenshots (1.x Prod, 2.x Vib, 3.x Energy)
+│   └── step1-bronze-exploration/
+│       └── RAW_EVENTS_FINDINGS.md     ← Bronze exploration findings
+├── reference/
+│   ├── uns_schema.md                  ← UNS hierarchy + payload structure
+│   ├── isa95.md                       ← ISA-95 model cheatsheet
+│   └── data_dictionary.md             ← รายละเอียด field ทั้งหมด
+└── hints/                             ← ถ้าติดปัญหา ดู hint ได้ (แต่จะถูกหักคะแนน)
 ```
 
 ---
@@ -124,3 +141,29 @@ GROUP BY SCHEMA_VERSION ORDER BY COUNT(*) DESC;
 
 ข้อมูลจากโรงงานจริงในจังหวัดชลบุรี ประเทศไทย (anonymized)
 จัดทำโดย [Appomax](https://appomax.co) สำหรับ Snowflake x AWS Manufacturing Day 2026
+
+---
+
+## Video Walkthrough
+
+https://www.youtube.com/watch?v=hhqRf4AahKI
+
+---
+
+## Dashboard Preview
+
+### Production Health
+
+![Production Tab 1](docs/screenshots/1.1.jpg)
+![Production Tab 2](docs/screenshots/1.2.jpg)
+
+### Vibration Health
+
+![Vibration Tab 1](docs/screenshots/2.1.jpg)
+![Vibration Tab 2](docs/screenshots/2.2.jpg)
+
+### Energy
+
+![Energy Tab 1](docs/screenshots/3.1.jpg)
+![Energy Tab 2](docs/screenshots/3.2.jpg)
+![Energy Tab 3](docs/screenshots/3.3.jpg)

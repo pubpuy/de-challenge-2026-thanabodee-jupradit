@@ -1,0 +1,15 @@
+definition_version: 2
+
+entities:
+  streamlit_app:
+    type: streamlit
+    identifier:
+      name: STREAMLIT_APP
+      database: DE_CHALLENGE
+      schema: GOLD
+    stage: STREAMLIT_STAGE
+    query_warehouse: CHALLENGE_WH
+    main_file: "streamlit/plant_health.py"
+    artifacts:
+      - "streamlit/plant_health.py"
+      - "streamlit/.streamlit/config.toml"

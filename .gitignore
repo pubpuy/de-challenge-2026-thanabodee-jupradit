@@ -7,8 +7,9 @@ Thumbs.db
 .vscode/
 *.swp
 
-# Snowflake
-.snowflake/
+# Snowflake (keep example template in git, ignore secrets)
+.snowflake/*
+!.snowflake/config.toml.example
 
 # Data exports (too large for git)
 *.parquet
@@ -18,3 +19,10 @@ Thumbs.db
 __pycache__/
 *.pyc
 .venv/
+
+# Local notes (not for submission)
+ISSUES.md
+PLAN.md
+
+# Deploy bundle copies (use streamlit/ as source of truth)
+output/
